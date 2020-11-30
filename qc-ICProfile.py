@@ -207,8 +207,8 @@ def int_detc_indx(CorrCounts,FRGN):
 
     lFRGN = CM + (lh - CM) * FRGN / 100
     rFRGN = CM + (rh - CM) * FRGN / 100
-    print("lFRGN","rFRGN")
-    print(lFRGN,rFRGN)
+    print("lFRGN","rFRGN","lh","rh")
+    print(lFRGN,rFRGN,lh,rh)
 
     # lf = int(round(lFRGN)) + 1
     # rf = int(round(rFRGN))
@@ -281,19 +281,18 @@ def read_icp(filename):
     CalibND=[]
     Timetic=df['TIMETIC'][3]
     # These vectors will have the location of the sensors in the x, y and diagonal directions
-    X=[-16,-15.5,-15,-14.5,-14,-13.5,-13,-12.5,-12,-11.5,-11,-10.5,-10,-9.5,-9,-8.5,-8,-7.5,-7,-6.5,-6,-5.5,-5,-4.5,-4,-3.5,-3,-2.5,-2,-1.5,-1,0,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16]
-    Y=[-16,-15.5,-15,-14.5,-14,-13.5,-13,-12.5,-12,-11.5,-11,-10.5,-10,-9.5,-9,-8.5,-8,-7.5,-7,-6.5,-6,-5.5,-5,-4.5,-4,-3.5,-3,-2.5,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16]
-    PD=[-22.6,-21.9,-21.2,-20.5,-19.8,-19.1,-18.4,-17.7,-17,-16.3,-15.6,-14.8,-14.1,-13.4,-12.7,-12,-11.3,-10.6,-9.9,-9.2,-8.5,-7.8,-7.1,-6.4,-5.7,-4.9,-4.2,-3.5,-2.8,-2.1,-1.4,0,1.4,2.1,2.8,3.5,4.2,4.9,5.7,6.4,7.1,7.8,8.5,9.2,9.9,10.6,11.3,12,12.7,13.4,14.1,14.8,15.6,16.3,17,17.7,18.4,19.1,19.8,20.5,21.2,21.9,22.6]
-    ND=[-22.6,-21.9,-21.2,-20.5,-19.8,-19.1,-18.4,-17.7,-17,-16.3,-15.6,-14.8,-14.1,-13.4,-12.7,-12,-11.3,-10.6,-9.9,-9.2,-8.5,-7.8,-7.1,-6.4,-5.7,-4.9,-4.2,-3.5,-2.8,-2.1,-1.4,0,1.4,2.1,2.8,3.5,4.2,4.9,5.7,6.4,7.1,7.8,8.5,9.2,9.9,10.6,11.3,12,12.7,13.4,14.1,14.8,15.6,16.3,17,17.7,18.4,19.1,19.8,20.5,21.2,21.9,22.6]
-    PDX=np.dot(PD, np.cos(pi/4))
-    PDY=np.dot(PD, np.sin(pi/4))
+    Y = (np.linspace(1,65,65)-33)/2
+    X= np.delete(np.delete(Y,31),32)
+    PD = np.delete(np.delete((np.linspace(1,65,65)-33)/2,31),32)
+    ND=PD
+
+    PDX = PD/ np.cos(pi / 4)
+    PDY = PD/ np.sin(pi / 4)
+    NDX = ND/ np.cos(pi / 4 - pi / 2)
+    NDY = ND/ np.sin(pi / 4 - pi / 2)
 
     QuadWedgeCal=[0.5096,0,0,0,0,0,0,0,0] # 6xqw,15xqw,6fffqw,10fffqw,6eqw,9eqw,12eqw,16eqw,20eqw
 
-
-
-    NDX= np.dot( ND , np.cos(pi/4+pi/2))
-    NDY= np.dot( ND, np.sin(pi/4+pi/2) )
 
     # figs = [] #in this list we will hold all the figures
 
@@ -302,35 +301,30 @@ def read_icp(filename):
     # print('Backrate',df)
 
 
-    # For FFF data
-    k=5
+
     for column in df.columns[5:68]: #this section records the X axis (-)
         CorrCountXvect.append((df[column][3] - Timetic*df[column][0])*df[column][1]/gain)#the corrected data for leakage = Timetic*Bias*Calibration/Gain
         BiasX.append(df[column][0]) # already used in the formula above but saving them just in case
         CalibX.append(df[column][1])
         RawCountXvect.append(df[column][3])
-        k=k+1
 
     for column in df.columns[68:133]: #this section records the Y axis (|)
         CorrCountYvect.append((df[column][3] - Timetic*df[column][0])*df[column][1]/gain)
         BiasY.append(df[column][0]) # already used in the formula above but saving them just in case
         CalibY.append(df[column][1])
         RawCountYvect.append(df[column][3])
-        k=k+1
 
     for column in df.columns[133:196]: #this section records the D1 axis  (/)
         CorrCountPDvect.append((df[column][3] - Timetic*df[column][0])*df[column][1]/gain)
         BiasPD.append(df[column][0]) # already used in the formula above but saving them just in case
         CalibPD.append(df[column][1])
         RawCountPDvect.append(df[column][3])
-        k=k+1
 
     for column in df.columns[196:259]: #this section records the D2 axis  (\)
         CorrCountNDvect.append((df[column][3] - Timetic*df[column][0])*df[column][1]/gain)
         BiasND.append(df[column][0]) # already used in the formula above but saving them just in case
         CalibND.append(df[column][1])
         RawCountNDvect.append(df[column][3])
-        k=k+1
 
 
     #Temporary figure placement
@@ -366,7 +360,8 @@ def read_icp(filename):
     print(yli, yri, ylFRGN, yrFRGN, CMY)
 
 
-
+    print(np.amax(CorrCountXvect),np.amin(CorrCountXvect),len(CorrCountXvect),CorrCountXvect)
+    exit(0)
 
 
 
@@ -380,6 +375,10 @@ def read_icp(filename):
     #flatness calculation by variance, remember these ranges are assuming a field size of 30X30
     # print(len(CorrCountXvect))
     # print(CorrCountXvect,np.amax(CorrCountXvect[8:54]),np.amin(CorrCountXvect[8:54]))
+    print('amaxx','aminx')
+    print(np.amax(CorrCountXvect[xli:xri+1]), np.amin(CorrCountXvect[xli:xri+1]),CorrCountXvect[xli:xri+1] )
+    print('amaxy','aminy')
+    print(np.amax(CorrCountYvect[yli:yri+1]), np.amin(CorrCountYvect[yli:yri+1]) ,CorrCountYvect[yli:yri+1] )
     flatness_x = 100*(np.amax(CorrCountXvect[xli:xri+1])-np.amin(CorrCountXvect[xli:xri+1]))/(np.amax(CorrCountXvect[xli:xri+1])+np.amin(CorrCountXvect[xli:xri+1]))  # calculating flatness in the Transverse - X direction
     flatness_y = 100*(np.amax(CorrCountYvect[yli:yri+1])-np.amin(CorrCountYvect[yli:yri+1]))/(np.amax(CorrCountYvect[yli:yri+1])+np.amin(CorrCountYvect[yli:yri+1]))  # calculating flatness in the Radial - Y direction (It has a couple of more sensors in -0.5 and 0.5)
     # print(len(CorrCountXvect),'data=',CorrCountXvect[59],'unflatness_x=',unflatness_x,'unflatness_y=',unflatness_y, 'flatness_x=', flatness_x, 'flatness_y=', flatness_y)
@@ -457,12 +456,10 @@ def read_icp(filename):
 
 
 
-    #for the Y # KEEP WORKING HERE!
+    #for the Y
     area_R_Y = area_calc(CorrCountYvect[int(CMY):yri+1], Yi[int(CMY):yri+1])
     area_L_Y = area_calc(CorrCountYvect[yli:int(CMY)+1], Yi[yli:int(CMY)+1])
 
-    # print('area_R_Y',area_R_Y)
-    # print('area_L_Y',area_L_Y)
 
 
     symmetry_Y = 200 * (area_R_Y - area_L_Y) / (area_L_Y + area_R_Y)
