@@ -212,7 +212,8 @@ def int_detc_indx(CorrCounts,FRGN):
 
     # lf = int(round(lFRGN)) + 1
     # rf = int(round(rFRGN))
-    lf = int(lFRGN) + 1
+    # lf = int(lFRGN)+1 # Although this is in the manual  the lf definition below gives better results for flatness
+    lf = int(lFRGN)
     rf = int(rFRGN)
 
     return lf, rf, lFRGN, rFRGN, CM
@@ -360,10 +361,6 @@ def read_icp(filename):
     print(yli, yri, ylFRGN, yrFRGN, CMY)
 
 
-    print(np.amax(CorrCountXvect),np.amin(CorrCountXvect),len(CorrCountXvect),CorrCountXvect)
-    exit(0)
-
-
 
     #here we calculate the unflatness
     central_value = float(CorrCountXvect[31])
@@ -375,10 +372,10 @@ def read_icp(filename):
     #flatness calculation by variance, remember these ranges are assuming a field size of 30X30
     # print(len(CorrCountXvect))
     # print(CorrCountXvect,np.amax(CorrCountXvect[8:54]),np.amin(CorrCountXvect[8:54]))
-    print('amaxx','aminx')
-    print(np.amax(CorrCountXvect[xli:xri+1]), np.amin(CorrCountXvect[xli:xri+1]),CorrCountXvect[xli:xri+1] )
-    print('amaxy','aminy')
-    print(np.amax(CorrCountYvect[yli:yri+1]), np.amin(CorrCountYvect[yli:yri+1]) ,CorrCountYvect[yli:yri+1] )
+    # print('amaxx','aminx')
+    # print(np.amax(CorrCountXvect[xli:xri+1]), np.amin(CorrCountXvect[xli:xri+1]),CorrCountXvect[xli:xri+1] )
+    # print('amaxy','aminy')
+    # print(np.amax(CorrCountYvect[yli:yri+1]), np.amin(CorrCountYvect[yli:yri+1]) ,CorrCountYvect[yli:yri+1] )
     flatness_x = 100*(np.amax(CorrCountXvect[xli:xri+1])-np.amin(CorrCountXvect[xli:xri+1]))/(np.amax(CorrCountXvect[xli:xri+1])+np.amin(CorrCountXvect[xli:xri+1]))  # calculating flatness in the Transverse - X direction
     flatness_y = 100*(np.amax(CorrCountYvect[yli:yri+1])-np.amin(CorrCountYvect[yli:yri+1]))/(np.amax(CorrCountYvect[yli:yri+1])+np.amin(CorrCountYvect[yli:yri+1]))  # calculating flatness in the Radial - Y direction (It has a couple of more sensors in -0.5 and 0.5)
     # print(len(CorrCountXvect),'data=',CorrCountXvect[59],'unflatness_x=',unflatness_x,'unflatness_y=',unflatness_y, 'flatness_x=', flatness_x, 'flatness_y=', flatness_y)
