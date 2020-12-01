@@ -404,12 +404,14 @@ def read_icp(filename):
         Yi.append(i)
 
 
-    for i in range(0, len(CorrCountXvect)):
-        symmetry_X = (CorrCountXvect[i] - CorrCountXvect[len(CorrCountXvect) - i - 1]) / CorrCountXvect[len(CorrCountXvect) // 2] * 100
-        # print(len(CorrCountXvect) // 2, i, len(CorrCountXvect) - i)
-        print(i,'symmetry_X=', symmetry_X)
 
-    exit(0)
+
+    # symmetryXVect = (np.flip(CorrCountXvect) - CorrCountXvect)/CorrCountXvect[len(CorrCountXvect)//2]*100
+    # symmetryYVect = (np.flip(CorrCountYvect) - CorrCountYvect)/CorrCountYvect[len(CorrCountYvect)//2]*100
+    # print('amax(symmXVect)',max(symmetryXVect[xli:len(symmetryXVect)//2],key=abs))
+    # print('amax(symmYVect)',max(symmetryYVect[yli:len(symmetryYVect)//2],key=abs))
+
+    # exit(0)
 
 
 
