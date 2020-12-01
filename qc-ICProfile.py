@@ -388,10 +388,28 @@ def read_icp(filename):
         # print(i, v)
         Xi.append(i)
 
+    PDi = []
+    for i, v in enumerate(CorrCountPDvect):
+        # print(i, v)
+        PDi.append(i)
+
+    NDi = []
+    for i, v in enumerate(CorrCountNDvect):
+        # print(i, v)
+        NDi.append(i)
+
     Yi = []
     for i, v in enumerate(CorrCountYvect):
         # print(i, v)
         Yi.append(i)
+
+
+    for i in range(0, len(CorrCountXvect)):
+        symmetry_X = (CorrCountXvect[i] - CorrCountXvect[len(CorrCountXvect) - i - 1]) / CorrCountXvect[len(CorrCountXvect) // 2] * 100
+        # print(len(CorrCountXvect) // 2, i, len(CorrCountXvect) - i)
+        print(i,'symmetry_X=', symmetry_X)
+
+    exit(0)
 
 
 
@@ -400,123 +418,80 @@ def read_icp(filename):
 
     # here we calculate the symmetry (This code is equivalent to SYMA - see documentation)
     # for the X
-
-    area_R_X = area_calc(CorrCountXvect[int(CMX):xri+1], Xi[int(CMX):xri+1])
-    area_L_X = area_calc(CorrCountXvect[xli:int(CMX)+1], Xi[xli:int(CMX)+1])
-
-    # print('1','area_L_X','area_R_X')
-    # print(area_L_X,area_R_X)
-    #
-    mCMX = (CorrCountXvect[int(CMX)+1] - CorrCountXvect[int(CMX)]) / (int(CMX)+1 - int(CMX))
-    fCMX = CorrCountXvect[int(CMX)] + (CMX-int(CMX))*mCMX
-    areaCMX = 1/2 * (fCMX+CorrCountXvect[int(CMX)]) * (CMX-int(CMX))
-    # print(CMX, int(CMX), areaCMX)
-    #
-    ml = (CorrCountXvect[xli]-CorrCountXvect[xli-1]) / (xli-(xli-1))
-    fxlFRGN = CorrCountXvect[xli-1] + (xlFRGN-(xli-1))*ml
-    # print(fxlFRGN,CorrCountXvect[xli-1])
-    areaExL = 1/2 * (fxlFRGN + CorrCountXvect[xli]) * (xli-xlFRGN)
+    area_R_X = area_calc(CorrCountXvect[int(CMX):xri + 1], Xi[int(CMX):xri + 1])
+    area_L_X = area_calc(CorrCountXvect[xli:int(CMX) + 1], Xi[xli:int(CMX) + 1])
+    mCMX = (CorrCountXvect[int(CMX) + 1] - CorrCountXvect[int(CMX)]) / (int(CMX) + 1 - int(CMX))
+    fCMX = CorrCountXvect[int(CMX)] + (CMX - int(CMX)) * mCMX
+    areaCMX = 1 / 2 * (fCMX + CorrCountXvect[int(CMX)]) * (CMX - int(CMX))
+    ml = (CorrCountXvect[xli] - CorrCountXvect[xli - 1]) / (xli - (xli - 1))
+    fxlFRGN = CorrCountXvect[xli - 1] + (xlFRGN - (xli - 1)) * ml
+    areaExL = 1 / 2 * (fxlFRGN + CorrCountXvect[xli]) * (xli - xlFRGN)
     area_L_X = area_L_X + areaCMX + areaExL
-    #
-    mr = (CorrCountXvect[xri+1]-CorrCountXvect[xri]) / (xri+1-xri)
-    fxrFRGN = CorrCountXvect[xri] + (xrFRGN-(xri))*mr
-    # print(fxrFRGN,CorrCountXvect[xri])
+    mr = (CorrCountXvect[xri + 1] - CorrCountXvect[xri]) / (xri + 1 - xri)
+    fxrFRGN = CorrCountXvect[xri] + (xrFRGN - (xri)) * mr
     areaExR = 1 / 2 * (fxrFRGN + CorrCountXvect[xri]) * (xrFRGN - xri)
     area_R_X = area_R_X - areaCMX + areaExR
-    #
-    # print('areaExL','areaExR','areaCMX')
-    # print(areaExL,areaExR,areaCMX)
-    # print('2','area_L_X','area_R_X')
-    # print(area_L_X,area_R_X)
-
-    # fig,ax = plt.subplots()
-    # ax.scatter(Xi,CorrCountXvect)
-    # ax.scatter(xli,CorrCountXvect[xli],label='xli')
-    # ax.scatter(xlFRGN,fxlFRGN,label='xlFRGN')
-    # ax.scatter(xri,CorrCountXvect[xri],label='xri')
-    # ax.scatter(xrFRGN,fxrFRGN,label='xrFRGN')
-    # ax.scatter(int(CMX),CorrCountXvect[int(CMX)],label='int(CMX)')
-    # ax.scatter(CMX,fCMX,label='CMX')
-    # ax.set_title('X')
-    # ax.legend()
-    #
-    # fig,ax = plt.subplots()
-    # print(len(CorrCountXvect) // 2)
-    # # ax.scatter(Xi[len(CorrCountXvect) // 2:xri+1],CorrCountXvect[len(CorrCountXvect) // 2:xri+1])
-    # ax.scatter(Xi[xli:int(CMX)+1],CorrCountXvect[xli:int(CMX)+1])
-    # ax.set_title('X')
-    # ax.legend()
-
 
     symmetry_X = 200 * (area_R_X - area_L_X) / (area_L_X + area_R_X)
     print('Symmetry_X=', symmetry_X)
 
-
-
-    #for the Y
-    area_R_Y = area_calc(CorrCountYvect[int(CMY):yri+1], Yi[int(CMY):yri+1])
-    area_L_Y = area_calc(CorrCountYvect[yli:int(CMY)+1], Yi[yli:int(CMY)+1])
-
-
-
+    # for the Y
+    area_R_Y = area_calc(CorrCountYvect[int(CMY):yri + 1], Yi[int(CMY):yri + 1])
+    area_L_Y = area_calc(CorrCountYvect[yli:int(CMY) + 1], Yi[yli:int(CMY) + 1])
     symmetry_Y = 200 * (area_R_Y - area_L_Y) / (area_L_Y + area_R_Y)
-    # symmetry_Y = 100*(CorrCountYvect[8]-CorrCountYvect[57])/CorrCountYvect[int(len(CorrCountYvect) / 2)]
-    # print('Symmetry_Y_nocorr=', symmetry_Y)
-
-
-    mCMY = (CorrCountYvect[int(CMY)+1] - CorrCountYvect[int(CMY)]) / (int(CMY)+1 - int(CMY))
-    fCMY = CorrCountYvect[int(CMY)] + (CMY-int(CMY))*mCMY
-    areaCMY = 1/2 * (fCMY+CorrCountYvect[int(CMY)]) * (CMY-int(CMY))
-
-    #
-    ml = (CorrCountYvect[yli]-CorrCountYvect[yli-1]) / (yli-(yli-1))
-    fylFRGN = CorrCountYvect[yli-1] + (ylFRGN-(yli-1))*ml
-    areaEyL = 1/2 * (fylFRGN + CorrCountYvect[yli]) * (yli-ylFRGN)
+    mCMY = (CorrCountYvect[int(CMY) + 1] - CorrCountYvect[int(CMY)]) / (int(CMY) + 1 - int(CMY))
+    fCMY = CorrCountYvect[int(CMY)] + (CMY - int(CMY)) * mCMY
+    areaCMY = 1 / 2 * (fCMY + CorrCountYvect[int(CMY)]) * (CMY - int(CMY))
+    ml = (CorrCountYvect[yli] - CorrCountYvect[yli - 1]) / (yli - (yli - 1))
+    fylFRGN = CorrCountYvect[yli - 1] + (ylFRGN - (yli - 1)) * ml
+    areaEyL = 1 / 2 * (fylFRGN + CorrCountYvect[yli]) * (yli - ylFRGN)
     area_L_Y = area_L_Y + areaCMY + areaEyL
-    #
-    mr = (CorrCountYvect[yri+1]-CorrCountYvect[yri]) / (yri+1-yri)
-    fyrFRGN = CorrCountYvect[yri] + (yrFRGN-(yri))*mr
+    mr = (CorrCountYvect[yri + 1] - CorrCountYvect[yri]) / (yri + 1 - yri)
+    fyrFRGN = CorrCountYvect[yri] + (yrFRGN - (yri)) * mr
     areaEyR = 1 / 2 * (fyrFRGN + CorrCountYvect[yri]) * (yrFRGN - yri)
     area_R_Y = area_R_Y - areaCMY + areaEyR
-
-
-
-    # print('areaCMY','areaEyL','areaEyR')
-    # print(areaCMY,areaEyL,areaEyR)
-
-    # print('area_R_Y', area_R_Y)
-    # print('area_L_Y', area_L_Y)
-
-    # fig, ax = plt.subplots()
-    # ax.scatter(Yi, CorrCountYvect)
-    # ax.scatter(yli, CorrCountYvect[yli], label='yli')
-    # ax.scatter(ylFRGN, fylFRGN, label='ylFRGN')
-    # ax.scatter(yri, CorrCountYvect[yri], label='yri')
-    # ax.scatter(yrFRGN, fyrFRGN, label='yrFRGN')
-    # ax.scatter(int(CMY), CorrCountYvect[int(CMY)], label='int(CMY)')
-    # ax.scatter(CMY, fCMY, label='CMY')
-    # ax.set_title('Y')
-    # ax.legend()
-    #
-    # fig, ax = plt.subplots()
-    # ax.scatter(Yi[int(CMY):yri+1],CorrCountYvect[int(CMY):yri+1])
-    # ax.set_title('Y_R')
-    # fig, ax = plt.subplots()
-    # ax.scatter(Yi[yli:int(CMY)+1], CorrCountYvect[yli:int(CMY)+1])
-    # ax.set_title('Y_L')
-    #
-    # ax.legend()
-    # plt.show()
-
-
 
     symmetry_Y = 200 * (area_R_Y - area_L_Y) / (area_L_Y + area_R_Y)
     # symmetry_Y = 100*(CorrCountYvect[8]-CorrCountYvect[57])/CorrCountYvect[int(len(CorrCountYvect) / 2)]
     print('Symmetry_Y=', symmetry_Y)
 
-    # np.savetxt('CorrCountYvect.csv',np.asarray(CorrCountYvect),delimiter=',')
-    # np.savetxt('Yi.csv',np.asarray(Yi),delimiter=',')
-    # np.savetxt('Y.csv',np.asarray(Y),delimiter=',')
+    # for the PD
+    area_R_PD = area_calc(CorrCountPDvect[int(CMPD):pdri + 1], PDi[int(CMPD):pdri + 1])
+    area_L_PD = area_calc(CorrCountPDvect[pdli:int(CMPD) + 1], PDi[pdli:int(CMPD) + 1])
+    symmetry_PD = 200 * (area_R_PD - area_L_PD) / (area_L_PD + area_R_PD)
+    mCMPD = (CorrCountPDvect[int(CMPD) + 1] - CorrCountPDvect[int(CMPD)]) / (int(CMPD) + 1 - int(CMPD))
+    fCMPD = CorrCountPDvect[int(CMPD)] + (CMPD - int(CMPD)) * mCMPD
+    areaCMPD = 1 / 2 * (fCMPD + CorrCountPDvect[int(CMPD)]) * (CMPD - int(CMPD))
+    ml = (CorrCountPDvect[pdli] - CorrCountPDvect[pdli - 1]) / (pdli - (pdli - 1))
+    fpdlFRGN = CorrCountPDvect[pdli - 1] + (pdlFRGN - (pdli - 1)) * ml
+    areaEpdL = 1 / 2 * (fpdlFRGN + CorrCountPDvect[pdli]) * (pdli - pdlFRGN)
+    area_L_PD = area_L_PD + areaCMPD + areaEpdL
+    mr = (CorrCountPDvect[pdri + 1] - CorrCountPDvect[pdri]) / (pdri + 1 - pdri)
+    fpdrFRGN = CorrCountPDvect[pdri] + (pdrFRGN - (pdri)) * mr
+    areaEpdR = 1 / 2 * (fpdrFRGN + CorrCountPDvect[pdri]) * (pdrFRGN - pdri)
+    area_R_PD = area_R_PD - areaCMPD + areaEpdR
+
+    symmetry_PD = 200 * (area_R_PD - area_L_PD) / (area_L_PD + area_R_PD)
+    print('Symmetry_PD=', symmetry_PD)
+
+    # for the ND
+    area_R_ND = area_calc(CorrCountNDvect[int(CMND):ndri + 1], NDi[int(CMND):ndri + 1])
+    area_L_ND = area_calc(CorrCountNDvect[ndli:int(CMND) + 1], NDi[ndli:int(CMND) + 1])
+    symmetry_ND = 200 * (area_R_ND - area_L_ND) / (area_L_ND + area_R_ND)
+    mCMND = (CorrCountNDvect[int(CMND) + 1] - CorrCountNDvect[int(CMND)]) / (int(CMND) + 1 - int(CMND))
+    fCMND = CorrCountNDvect[int(CMND)] + (CMND - int(CMND)) * mCMND
+    areaCMND = 1 / 2 * (fCMND + CorrCountNDvect[int(CMND)]) * (CMND - int(CMND))
+    ml = (CorrCountNDvect[ndli] - CorrCountNDvect[ndli - 1]) / (ndli - (ndli - 1))
+    fndlFRGN = CorrCountNDvect[ndli - 1] + (ndlFRGN - (ndli - 1)) * ml
+    areaEndL = 1 / 2 * (fndlFRGN + CorrCountNDvect[ndli]) * (ndli - ndlFRGN)
+    area_L_ND = area_L_ND + areaCMND + areaEndL
+    mr = (CorrCountNDvect[ndri + 1] - CorrCountNDvect[ndri]) / (ndri + 1 - ndri)
+    fndrFRGN = CorrCountNDvect[ndri] + (ndrFRGN - (ndri)) * mr
+    areaEndR = 1 / 2 * (fndrFRGN + CorrCountNDvect[ndri]) * (ndrFRGN - ndri)
+    area_R_ND = area_R_ND - areaCMND + areaEndR
+
+    symmetry_ND = 200 * (area_R_ND - area_L_ND) / (area_L_ND + area_R_ND)
+    print('Symmetry_ND=', symmetry_ND)
 
     plt.show()
     exit(0)
