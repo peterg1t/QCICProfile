@@ -353,12 +353,20 @@ def read_icp(filename):
     FRGN=80
     xli,xri, xlFRGN, xrFRGN,CMX = int_detc_indx(CorrCountXvect,FRGN)
     yli,yri,ylFRGN, yrFRGN,CMY = int_detc_indx(CorrCountYvect,FRGN)
+    pdli,pdri,pdlFRGN, pdrFRGN,CMPD = int_detc_indx(CorrCountPDvect,FRGN)
+    ndli,ndri,ndlFRGN, ndrFRGN,CMND = int_detc_indx(CorrCountNDvect,FRGN)
 
     print('xli,xri, xlFRGN, xrFRGN,CMX')
     print(xli,xri, xlFRGN, xrFRGN,CMX)
 
     print('yli,yri, ylFRGN, yrFRGN,CMY')
     print(yli, yri, ylFRGN, yrFRGN, CMY)
+
+    print('pdli,pdri, pdlFRGN, pdrFRGN,CMY')
+    print(pdli, pdri, pdlFRGN, pdrFRGN, CMY)
+
+    print('ndli,ndri, ndlFRGN, ndrFRGN,CMY')
+    print(ndli, ndri, ndlFRGN, ndrFRGN, CMY)
 
 
 
