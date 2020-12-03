@@ -210,9 +210,6 @@ def int_detc_indx(CorrCounts,FRGN):
     print("lFRGN","rFRGN","lh","rh")
     print(lFRGN,rFRGN,lh,rh)
 
-    # lf = int(round(lFRGN)) + 1
-    # rf = int(round(rFRGN))
-    # lf = int(lFRGN)+1 # Although this is in the manual  the lf definition below gives better results for flatness
     lf = int(lFRGN)
     rf = int(rFRGN)
 
@@ -378,17 +375,21 @@ def read_icp(filename):
     print('unflatness(x)=',unflatness_x,'unflatness(y)=',unflatness_y)
 
     #flatness calculation by variance, remember these ranges are assuming a field size of 30X30
-    # print(len(CorrCountXvect))
-    # print(CorrCountXvect,np.amax(CorrCountXvect[8:54]),np.amin(CorrCountXvect[8:54]))
-    # print('amaxx','aminx')
-    # print(np.amax(CorrCountXvect[xli:xri+1]), np.amin(CorrCountXvect[xli:xri+1]),CorrCountXvect[xli:xri+1] )
-    # print('amaxy','aminy')
-    # print(np.amax(CorrCountYvect[yli:yri+1]), np.amin(CorrCountYvect[yli:yri+1]) ,CorrCountYvect[yli:yri+1] )
-    flatness_x = 100*(np.amax(CorrCountXvect[xli:xri+1])-np.amin(CorrCountXvect[xli:xri+1]))/(np.amax(CorrCountXvect[xli:xri+1])+np.amin(CorrCountXvect[xli:xri+1]))  # calculating flatness in the Transverse - X direction
-    flatness_y = 100*(np.amax(CorrCountYvect[yli:yri+1])-np.amin(CorrCountYvect[yli:yri+1]))/(np.amax(CorrCountYvect[yli:yri+1])+np.amin(CorrCountYvect[yli:yri+1]))  # calculating flatness in the Radial - Y direction (It has a couple of more sensors in -0.5 and 0.5)
-    # print(len(CorrCountXvect),'data=',CorrCountXvect[59],'unflatness_x=',unflatness_x,'unflatness_y=',unflatness_y, 'flatness_x=', flatness_x, 'flatness_y=', flatness_y)
+    # flatness_x = 100*(np.amax(CorrCountXvect[xli:xri + 1])-np.amin(CorrCountXvect[xli:xri + 1]))/(np.amax(CorrCountXvect[xli:xri + 1])+np.amin(CorrCountXvect[xli:xri + 1]))  # calculating flatness in the Transverse - X direction
+    # flatness_y = 100*(np.amax(CorrCountYvect[yli:yri + 1])-np.amin(CorrCountYvect[yli:yri + 1]))/(np.amax(CorrCountYvect[yli:yri + 1])+np.amin(CorrCountYvect[yli:yri + 1]))  # calculating flatness in the Radial - Y direction (It has a couple of more sensors in -0.5 and 0.5)
+    # flatness_pd = 100 * (np.amax(CorrCountPDvect[pdli:pdri + 1]) - np.amin(CorrCountPDvect[pdli:pdri + 1])) / (np.amax(CorrCountPDvect[pdli:pdri + 1]) + np.amin(CorrCountPDvect[pdli:pdri + 1]))  # calculating flatness in the PD direction (It has a couple of more sensors in -0.5 and 0.5)
+    # flatness_nd = 100 * (np.amax(CorrCountNDvect[ndli:ndri + 1]) - np.amin(CorrCountNDvect[ndli:ndri + 1])) / (np.amax(CorrCountNDvect[ndli:ndri + 1]) + np.amin(CorrCountNDvect[ndli:ndri + 1]))  # calculating flatness in the ND direction (It has a couple of more sensors in -0.5 and 0.5)
 
-    print('flatness(x)=',flatness_x,'flatness(y)=',flatness_y)
+    #flatness calculation by CAX variance
+    flatness_x = 0.5*100*(np.amax(CorrCountXvect[xli:xri + 1])-np.amin(CorrCountXvect[xli:xri+1]))/CorrCountXvect[len(CorrCountXvect)//2]  # calculating flatness in the Transverse - X direction
+    flatness_y = 0.5*100*(np.amax(CorrCountYvect[yli:yri + 1])-np.amin(CorrCountYvect[yli:yri+1]))/CorrCountYvect[len(CorrCountYvect)//2]  # calculating flatness in the Radial - Y direction (It has a couple of more sensors in -0.5 and 0.5)
+    flatness_pd = 0.5*100 * (np.amax(CorrCountPDvect[pdli:pdri + 1]) - np.amin(CorrCountPDvect[pdli:pdri + 1])) / CorrCountPDvect[len(CorrCountPDvect)//2]  # calculating flatness in the PD direction (It has a couple of more sensors in -0.5 and 0.5)
+    flatness_nd = 0.5*100 * (np.amax(CorrCountNDvect[ndli:ndri + 1]) - np.amin(CorrCountNDvect[ndli:ndri + 1])) / CorrCountNDvect[len(CorrCountNDvect)//2]  # calculating flatness in the ND direction (It has a couple of more sensors in -0.5 and 0.5)
+
+    print('flatness(x)=',flatness_x)
+    print('flatness(y)=',flatness_y)
+    print('flatness(pd)=',flatness_pd)
+    print('flatness(nd)=',flatness_nd)
 
 
     Xi = []  # these two vectors hold the index location of each detector
@@ -413,13 +414,21 @@ def read_icp(filename):
 
 
 
+    # # here we calculate the symmetry (CAX Point difference)
+    symmetryXVect = (np.flip(CorrCountXvect) - CorrCountXvect)/CorrCountXvect[len(CorrCountXvect)//2]*100
+    symmetryYVect = (np.flip(CorrCountYvect) - CorrCountYvect)/CorrCountYvect[len(CorrCountYvect)//2]*100
+    symmetryPDVect = (np.flip(CorrCountPDvect) - CorrCountPDvect)/CorrCountPDvect[len(CorrCountPDvect)//2]*100
+    symmetryNDVect = (np.flip(CorrCountNDvect) - CorrCountNDvect)/CorrCountNDvect[len(CorrCountNDvect)//2]*100
+    symmetry_X=max(symmetryXVect[xli:len(symmetryXVect)//2],key=abs)
+    symmetry_Y=max(symmetryYVect[yli:len(symmetryYVect)//2],key=abs)
+    symmetry_PD=max(symmetryPDVect[pdli:len(symmetryPDVect)//2],key=abs)
+    symmetry_ND=max(symmetryNDVect[ndli:len(symmetryNDVect)//2],key=abs)
+    print('amax(symmXVect)',symmetry_X)
+    print('amax(symmYVect)',symmetry_Y)
+    print('amax(symmPDVect)',symmetry_PD)
+    print('amax(symmNDVect)',symmetry_ND)
 
-    # symmetryXVect = (np.flip(CorrCountXvect) - CorrCountXvect)/CorrCountXvect[len(CorrCountXvect)//2]*100
-    # symmetryYVect = (np.flip(CorrCountYvect) - CorrCountYvect)/CorrCountYvect[len(CorrCountYvect)//2]*100
-    # print('amax(symmXVect)',max(symmetryXVect[xli:len(symmetryXVect)//2],key=abs))
-    # print('amax(symmYVect)',max(symmetryYVect[yli:len(symmetryYVect)//2],key=abs))
-
-    # exit(0)
+    exit(0)
 
 
 
