@@ -391,7 +391,7 @@ def read_icp(filename):
         # print(i, v)
         Yi.append(i)
 
-
+    # 
 
     # # here we calculate the symmetry (CAX Point difference)
     symmetryXVect = (np.flip(CorrCountXvect) - CorrCountXvect)/CorrCountXvect[len(CorrCountXvect)//2]*100
