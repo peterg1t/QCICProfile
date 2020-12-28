@@ -61,6 +61,7 @@ import pandas as pd
 from openpyxl import Workbook, cell, load_workbook
 from math import *
 import scipy.integrate as integrate
+from int_detc_indx import int_detc_indx
 
 
 
@@ -191,29 +192,7 @@ def xls_cell_spec(mode, energy):
 
 
 
-def int_detc_indx(CorrCounts,FRGN):
-    max_l = np.amax(CorrCounts[0:len(CorrCounts) // 2])
-    max_r = np.amax(CorrCounts[len(CorrCounts) // 2:len(CorrCounts)])
-    for i in range(0, len(CorrCounts) // 2):  # for the left side of the array
-        if CorrCounts[i] <= max_l / 2 and CorrCounts[i + 1] > max_l / 2:
-            lh = i + (max_l / 2 - CorrCounts[i]) / (CorrCounts[i + 1] - CorrCounts[i])
 
-    for j in range(len(CorrCounts) // 2, len(CorrCounts)-1):  # for the right side of the array
-        if CorrCounts[j] > max_r / 2 and CorrCounts[j + 1] <= max_r / 2:
-            rh = j + (CorrCounts[j] - max_r / 2) / (CorrCounts[j] - CorrCounts[j + 1])
-
-    CM = (lh + rh) / 2
-
-
-    lFRGN = CM + (lh - CM) * FRGN / 100
-    rFRGN = CM + (rh - CM) * FRGN / 100
-    print("lFRGN","rFRGN","lh","rh")
-    print(lFRGN,rFRGN,lh,rh)
-
-    lf = int(lFRGN)
-    rf = int(rFRGN)
-
-    return lf, rf, lFRGN, rFRGN, CM
 
 
 
@@ -423,10 +402,18 @@ def read_icp(filename):
     symmetry_Y=max(symmetryYVect[yli:len(symmetryYVect)//2],key=abs)
     symmetry_PD=max(symmetryPDVect[pdli:len(symmetryPDVect)//2],key=abs)
     symmetry_ND=max(symmetryNDVect[ndli:len(symmetryNDVect)//2],key=abs)
-    print('amax(symmXVect)',symmetry_X)
-    print('amax(symmYVect)',symmetry_Y)
-    print('amax(symmPDVect)',symmetry_PD)
-    print('amax(symmNDVect)',symmetry_ND)
+    # print('amax(symmXVect)',symmetry_X)
+    # print('amax(symmYVect)',symmetry_Y)
+    # print('amax(symmPDVect)',symmetry_PD)
+    # print('amax(symmNDVect)',symmetry_ND)
+    index_sym_X = np.argmax(np.abs(symmetryXVect[xli:len(symmetryXVect)//2]))
+    index_sym_Y = np.argmax(np.abs(symmetryYVect[yli:len(symmetryYVect)//2]))
+    index_sym_PD = np.argmax(np.abs(symmetryPDVect[pdli:len(symmetryPDVect)//2]))
+    index_sym_ND = np.argmax(np.abs(symmetryNDVect[ndli:len(symmetryNDVect)//2]))
+    print(xli,X[xli],'amax(symmXVect)',symmetry_X,index_sym_X,X[xli+index_sym_X])
+    print(yli,Y[yli],'amax(symmYVect)',symmetry_Y,index_sym_Y,Y[yli+index_sym_Y])
+    print(pdli,PD[pdli],'amax(symmPDVect)',symmetry_PD,index_sym_PD,PD[pdli+index_sym_PD])
+    print(ndli,ND[ndli],'amax(symmNDVect)',symmetry_ND,index_sym_ND,ND[ndli+index_sym_ND])
 
     exit(0)
 

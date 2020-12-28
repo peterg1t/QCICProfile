@@ -61,6 +61,7 @@ import pandas as pd
 from openpyxl import Workbook, cell, load_workbook
 from math import *
 import scipy.integrate as integrate
+from int_detc_indx import int_detc_indx
 
 
 
@@ -72,30 +73,6 @@ def area_calc(profile,coord):
 
 
 
-def int_detc_indx(CorrCounts,FRGN):
-    max_l = np.amax(CorrCounts[0:len(CorrCounts) // 2])
-    max_r = np.amax(CorrCounts[len(CorrCounts) // 2:len(CorrCounts)])
-    for i in range(0, len(CorrCounts) // 2):  # for the left side of the array
-        if CorrCounts[i] <= max_l / 2 and CorrCounts[i + 1] > max_l / 2:
-            lh = i + (max_l / 2 - CorrCounts[i]) / (CorrCounts[i + 1] - CorrCounts[i])
-
-    for j in range(len(CorrCounts) // 2, len(CorrCounts)-1):  # for the right side of the array
-        if CorrCounts[j] > max_r / 2 and CorrCounts[j + 1] <= max_r / 2:
-            rh = j + (CorrCounts[j] - max_r / 2) / (CorrCounts[j] - CorrCounts[j + 1])
-
-    CM = (lh + rh) / 2
-
-
-    lFRGN = CM + (lh - CM) * FRGN / 100
-    rFRGN = CM + (rh - CM) * FRGN / 100
-    print("lFRGN","rFRGN","lh","rh")
-    print(lFRGN,rFRGN,lh,rh)
-
-    lf = int(lFRGN)
-    rf = int(rFRGN)
-
-    return lf, rf, lFRGN, rFRGN, CM
-
 
 
 
@@ -105,9 +82,13 @@ def read_icp(dirname):
 #we need to read the calibration file that corresponds with     
     with os.scandir(dirname) as entries:
         Data_dict = {}
+        Data_dict2 = {}
         key_list=[]
+        key_list2=[]
         key_list.append('X')
-        key_list.append('Y')
+        key_list.append('Y')  
+        key_list2.append('X')
+        key_list2.append('Y')
 
         # These vectors will have the location of the sensors in the x, y and diagonal directions
         Y = (np.linspace(1,65,65)-33)/2
@@ -121,6 +102,8 @@ def read_icp(dirname):
 
         Data_dict['X']=np.pad(X,(0,2),'constant',constant_values=0)
         Data_dict['Y']=Y
+        Data_dict2['X']=np.pad(X[:len(X)//2],(0,1),'constant',constant_values=0)
+        Data_dict2['Y']=Y[:len(Y)//2]
          #PD and ND also use the same number of detectors
         for filename in entries:
             if filename.is_file():
@@ -191,6 +174,15 @@ def read_icp(dirname):
                         BiasND.append(df[column][0]) # already used in the formula above but saving them just in case
                         CalibND.append(df[column][1])
                         RawCountNDvect.append(df[column][3])
+
+
+                    FRGN=80
+                    xli,xri, xlFRGN, xrFRGN,CMX = int_detc_indx(CorrCountXvect,FRGN)
+                    yli,yri,ylFRGN, yrFRGN,CMY = int_detc_indx(CorrCountYvect,FRGN)
+                    pdli,pdri,pdlFRGN, pdrFRGN,CMPD = int_detc_indx(CorrCountPDvect,FRGN)
+                    ndli,ndri,ndlFRGN, ndrFRGN,CMND = int_detc_indx(CorrCountNDvect,FRGN)
+
+
                     # wb = Workbook()
                     # ws = wb.active
                     # ws.append()
@@ -201,21 +193,90 @@ def read_icp(dirname):
                     key_list.append(os.path.splitext(filename.name)[0]+'_PD')
                     key_list.append(os.path.splitext(filename.name)[0]+'_ND')
 
+                    key_list2.append(os.path.splitext(filename.name)[0]+'_X')
+                    key_list2.append(os.path.splitext(filename.name)[0]+'_Y')
+                    key_list2.append(os.path.splitext(filename.name)[0]+'_PD')
+                    key_list2.append(os.path.splitext(filename.name)[0]+'_ND')
+
+                    # print(CorrCountXvect)
+                    symmetryXVect = (np.flip(CorrCountXvect) - CorrCountXvect)/CorrCountXvect[len(CorrCountXvect)//2]*100
+                    # symmetry_X=max(symmetryXVect[xli:len(symmetryXVect)//2],key=abs)
+                    # print(xli,symmetry_X)
+                    # for i in range(0,len(CorrCountXvect)//2):
+                    # #     symDiffXvect.append(CorrCountXvect[i]-CorrCountXvect[-i-1])
+                    #     print(i,X[i],CorrCountXvect[i],np.flip(CorrCountXvect)[i],symmetryXVect[i])
+                    # #     symDiffPDvect.append(CorrCountPDvect[i]-CorrCountPDvect[-i-1])
+                    # #     symDiffNDvect.append(CorrCountNDvect[i]-CorrCountNDvect[-i-1])
+                    
+                    print(CorrCountYvect)
+                    symmetryYVect = (np.flip(CorrCountYvect) - CorrCountYvect)/CorrCountYvect[len(CorrCountYvect)//2]*100
+                    
+                    symmetry_Y=max(symmetryYVect[yli:len(symmetryYVect)//2],key=abs)
+                    for i in range(0,len(CorrCountYvect)//2):
+                    #     symDiffXvect.append(CorrCountXvect[i]-CorrCountXvect[-i-1])
+                        print(i,Y[i],CorrCountYvect[i],np.flip(CorrCountYvect)[i],symmetryYVect[i])
+                    #     symDiffPDvect.append(CorrCountPDvect[i]-CorrCountPDvect[-i-1])
+                    #     symDiffNDvect.append(CorrCountNDvect[i]-CorrCountNDvect[-i-1])
+
+                    symmetryPDVect = (np.flip(CorrCountPDvect) - CorrCountPDvect)/CorrCountYvect[len(CorrCountPDvect)//2]*100
+                    symmetryNDVect = (np.flip(CorrCountNDvect) - CorrCountNDvect)/CorrCountYvect[len(CorrCountNDvect)//2]*100
+
+                    symmetry_X=max(symmetryXVect[xli:len(symmetryXVect)//2],key=abs)
+                    symmetry_Y=max(symmetryYVect[yli:len(symmetryYVect)//2],key=abs)
+                    symmetry_PD=max(symmetryPDVect[pdli:len(symmetryPDVect)//2],key=abs)
+                    symmetry_ND=max(symmetryNDVect[ndli:len(symmetryNDVect)//2],key=abs)
+                    index_sym_X = np.argmax(np.abs(symmetryXVect[xli:len(symmetryXVect)//2]))
+                    index_sym_Y = np.argmax(np.abs(symmetryYVect[yli:len(symmetryYVect)//2]))
+                    index_sym_PD = np.argmax(np.abs(symmetryPDVect[pdli:len(symmetryPDVect)//2]))
+                    index_sym_ND = np.argmax(np.abs(symmetryNDVect[ndli:len(symmetryNDVect)//2]))
+                    print(xli,X[xli],'amax(symmXVect)',symmetry_X,index_sym_X,X[xli+index_sym_X])
+                    print(yli,Y[yli],'amax(symmYVect)',symmetry_Y,index_sym_Y,Y[yli+index_sym_Y])
+                    print(pdli,PD[pdli],'amax(symmPDVect)',symmetry_PD,index_sym_PD,PD[pdli+index_sym_PD])
+                    print(ndli,ND[ndli],'amax(symmNDVect)',symmetry_ND,index_sym_ND,ND[ndli+index_sym_ND])
+
+                    
                     #we need to pad these arrays
                     CorrCountXvect.extend([0,0])
                     CorrCountPDvect.extend([0,0])
                     CorrCountNDvect.extend([0,0])
 
+
+                    symmetryXVect = symmetryXVect.tolist()
+                    symmetryPDVect = symmetryPDVect.tolist()
+                    symmetryNDVect = symmetryNDVect.tolist()
+
+                    symmetryXVect.extend([0,0])
+                    symmetryPDVect.extend([0,0])
+                    symmetryNDVect.extend([0,0])
+
+
+                    print(len(symmetryXVect),len(symmetryYVect),len(symmetryPDVect),len(symmetryNDVect))
+
+
+
                     Data_dict[os.path.splitext(filename.name)[0]+'_X']=CorrCountXvect
                     Data_dict[os.path.splitext(filename.name)[0]+'_Y']=CorrCountYvect
                     Data_dict[os.path.splitext(filename.name)[0]+'_PD']=CorrCountPDvect
                     Data_dict[os.path.splitext(filename.name)[0]+'_ND']=CorrCountNDvect
+
+                    Data_dict2[os.path.splitext(filename.name)[0]+'_X']=symmetryXVect[:len(symmetryXVect)//2]
+                    Data_dict2[os.path.splitext(filename.name)[0]+'_Y']=symmetryYVect[:len(symmetryYVect)//2]
+                    Data_dict2[os.path.splitext(filename.name)[0]+'_PD']=symmetryPDVect[:len(symmetryPDVect)//2]
+                    Data_dict2[os.path.splitext(filename.name)[0]+'_ND']=symmetryNDVect[:len(symmetryNDVect)//2]
                     
 
-        print(Data_dict)
         df = pd.DataFrame(Data_dict,columns=key_list)
-        print(df.describe)
-        df.to_excel(dirname+'curves.xlsx',sheet_name='Sheet1')
+        df2 = pd.DataFrame(Data_dict2,columns=key_list2)
+
+        book = load_workbook(dirname+'curves.xlsx')
+        writer = pd.ExcelWriter(dirname+'curves.xlsx',engine='openpyxl')
+        writer.book = book
+
+        # print(df.describe,df2.describe)
+        df.to_excel(writer,sheet_name='Sheet1')
+        df2.to_excel(writer,sheet_name='Sheet2')
+        writer.save()
+        writer.close()
         exit(0)
 
 
