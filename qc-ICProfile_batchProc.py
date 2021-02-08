@@ -268,6 +268,7 @@ def read_icp(dirname):
         df = pd.DataFrame(Data_dict,columns=key_list)
         df2 = pd.DataFrame(Data_dict2,columns=key_list2)
 
+        
         book = load_workbook(dirname+'curves.xlsx')
         writer = pd.ExcelWriter(dirname+'curves.xlsx',engine='openpyxl')
         writer.book = book
@@ -287,7 +288,7 @@ def read_icp(dirname):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()  # pylint: disable = invalid-name
-    parser.add_argument( "folder", help="path to file")
+    parser.add_argument( "folder", help="path to folder")
     args = parser.parse_args()  # pylint: disable = invalid-name
 
     if args.folder:
