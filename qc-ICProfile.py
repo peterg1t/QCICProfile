@@ -755,8 +755,21 @@ def read_icp(filename):
     peak1, _ = find_peaks(CorrCountXvectResDiff, prominence=5000)
     peak2, _ = find_peaks(-CorrCountXvectResDiff, prominence=5000)
 
+    # Check if the field edges are not detected
+
+    if (not peak1) or (not peak2):
+
+        raise RuntimeError(
+            "Field edge along X-axis not found! Please check field size and SSD are correct."
+        )
+
+        return
+
     if round(XRes[int(peak2)] - XRes[int(peak1)])!=30:
-        print("WARNING: X Field is not setup correctly.")
+        raise RuntimeError(
+            "Field size not set to 30 x 30 cm. Please check setup is correct."
+        )
+        return
 
 
 
