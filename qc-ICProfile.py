@@ -398,28 +398,28 @@ def read_icp(filename):
         Yi.append(i)
 
 
-    # # # here we calculate the symmetry (CAX Point difference)
-    # symmetryXVect = (np.flip(CorrCountXvect) - CorrCountXvect)/CorrCountXvect[len(CorrCountXvect)//2]*100
-    # symmetryYVect = (np.flip(CorrCountYvect) - CorrCountYvect)/CorrCountYvect[len(CorrCountYvect)//2]*100
-    # # print(CorrCountYvect,'symmetryYVect',symmetryYVect)
-    # symmetryPDVect = (np.flip(CorrCountPDvect) - CorrCountPDvect)/CorrCountPDvect[len(CorrCountPDvect)//2]*100
-    # symmetryNDVect = (np.flip(CorrCountNDvect) - CorrCountNDvect)/CorrCountNDvect[len(CorrCountNDvect)//2]*100
-    # symmetry_X=max(symmetryXVect[xli:len(symmetryXVect)//2],key=abs)
-    # symmetry_Y=max(symmetryYVect[yli:len(symmetryYVect)//2],key=abs)
-    # symmetry_PD=max(symmetryPDVect[pdli:len(symmetryPDVect)//2],key=abs)
-    # symmetry_ND=max(symmetryNDVect[ndli:len(symmetryNDVect)//2],key=abs)
-    # # print('amax(symmXVect)',symmetry_X)
-    # # print('amax(symmYVect)',symmetry_Y)
-    # # print('amax(symmPDVect)',symmetry_PD)
-    # # print('amax(symmNDVect)',symmetry_ND)
-    # index_sym_X = np.argmax(np.abs(symmetryXVect[xli:len(symmetryXVect)//2]))
-    # index_sym_Y = np.argmax(np.abs(symmetryYVect[yli:len(symmetryYVect)//2]))
-    # index_sym_PD = np.argmax(np.abs(symmetryPDVect[pdli:len(symmetryPDVect)//2]))
-    # index_sym_ND = np.argmax(np.abs(symmetryNDVect[ndli:len(symmetryNDVect)//2]))
-    # print(xli,X[xli],'amax(symmXVect)',symmetry_X,index_sym_X,X[xli+index_sym_X])
-    # print(yli,Y[yli],'amax(symmYVect)',symmetry_Y,index_sym_Y,Y[yli+index_sym_Y])
-    # print(pdli,PD[pdli],'amax(symmPDVect)',symmetry_PD,index_sym_PD,PD[pdli+index_sym_PD])
-    # print(ndli,ND[ndli],'amax(symmNDVect)',symmetry_ND,index_sym_ND,ND[ndli+index_sym_ND])
+    # # here we calculate the symmetry (CAX Point difference)
+    symmetryXVect = (np.flip(CorrCountXvect) - CorrCountXvect)/CorrCountXvect[len(CorrCountXvect)//2]*100
+    symmetryYVect = (np.flip(CorrCountYvect) - CorrCountYvect)/CorrCountYvect[len(CorrCountYvect)//2]*100
+    # print(CorrCountYvect,'symmetryYVect',symmetryYVect)
+    symmetryPDVect = (np.flip(CorrCountPDvect) - CorrCountPDvect)/CorrCountPDvect[len(CorrCountPDvect)//2]*100
+    symmetryNDVect = (np.flip(CorrCountNDvect) - CorrCountNDvect)/CorrCountNDvect[len(CorrCountNDvect)//2]*100
+    symmetry_X=max(symmetryXVect[xli:len(symmetryXVect)//2],key=abs)
+    symmetry_Y=max(symmetryYVect[yli:len(symmetryYVect)//2],key=abs)
+    symmetry_PD=max(symmetryPDVect[pdli:len(symmetryPDVect)//2],key=abs)
+    symmetry_ND=max(symmetryNDVect[ndli:len(symmetryNDVect)//2],key=abs)
+    # print('amax(symmXVect)',symmetry_X)
+    # print('amax(symmYVect)',symmetry_Y)
+    # print('amax(symmPDVect)',symmetry_PD)
+    # print('amax(symmNDVect)',symmetry_ND)
+    index_sym_X = np.argmax(np.abs(symmetryXVect[xli:len(symmetryXVect)//2]))
+    index_sym_Y = np.argmax(np.abs(symmetryYVect[yli:len(symmetryYVect)//2]))
+    index_sym_PD = np.argmax(np.abs(symmetryPDVect[pdli:len(symmetryPDVect)//2]))
+    index_sym_ND = np.argmax(np.abs(symmetryNDVect[ndli:len(symmetryNDVect)//2]))
+    print(xli,X[xli],'amax(symmXVect)',symmetry_X,index_sym_X,X[xli+index_sym_X])
+    print(yli,Y[yli],'amax(symmYVect)',symmetry_Y,index_sym_Y,Y[yli+index_sym_Y])
+    print(pdli,PD[pdli],'amax(symmPDVect)',symmetry_PD,index_sym_PD,PD[pdli+index_sym_PD])
+    print(ndli,ND[ndli],'amax(symmNDVect)',symmetry_ND,index_sym_ND,ND[ndli+index_sym_ND])
 
     # exit(0)
 
@@ -508,16 +508,8 @@ def read_icp(filename):
     print('Symmetry_ND=', symmetry_ND)
 
     plt.show()
-    exit(0)
-
-
-
-
-
-
-
-
-
+    # exit(0)
+    beamtype='X'
 
 
 
@@ -582,10 +574,12 @@ def read_icp(filename):
         YArea = np.sum(np.asarray(CorrCountYvect[5:24])) + np.sum(np.asarray(CorrCountYvect[41:60]))
 
         AreaRatio=(PDArea+NDArea)/(XArea+YArea)
-        # print('AreaRatio=',AreaRatio)
+        print('AreaRatio=',AreaRatio)
 
-
-
+        cart='a'
+        poption2='t'
+        D10=0
+        print(poption2,energy,cart,beamtype)
         #energies for TB
         if poption2.startswith(('t', 'truebeam', 'true')):
             if cart=='a':
@@ -593,6 +587,7 @@ def read_icp(filename):
                     m = 151.3453
                     b = -10.1259
                     D10=m*AreaRatio+b
+                    print('D10=',D10)
                     CellChange['G67'] = D10
                     Attributes = ['D10']
 
@@ -601,6 +596,7 @@ def read_icp(filename):
                     m = 184.1376
                     b = -30.4054
                     D10=m*AreaRatio+b
+                    print('D10=',D10)
                     CellChange['G69'] = D10
                     Attributes = ['D10']
 
@@ -608,6 +604,7 @@ def read_icp(filename):
                     m = 117.088
                     b = 9.95284
                     D10=m*AreaRatio+b
+                    print('D10=',D10)
                     CellChange['G68'] = D10
                     Attributes = ['D10']
 
@@ -615,6 +612,15 @@ def read_icp(filename):
                     m = 143.9148
                     b = -8.4045
                     D10=m*AreaRatio+b
+                    print('D10=',D10)
+                    CellChange['G70'] = D10
+                    Attributes = ['D10']
+
+                if energy=='10 MV' and beamtype=='X':
+                    m = 98.1368
+                    b = 19.4017
+                    D10=m*AreaRatio+b
+                    print('D10=',D10)
                     CellChange['G70'] = D10
                     Attributes = ['D10']
 
@@ -623,6 +629,7 @@ def read_icp(filename):
                     m = 151.3453
                     b = -10.7339
                     D10 = m * AreaRatio + b
+                    print('D10=',D10)
                     CellChange['G67'] = D10
                     Attributes = ['D10']
 
@@ -630,6 +637,7 @@ def read_icp(filename):
                     m = 184.1376
                     b = -30.9800
                     D10 = m * AreaRatio + b
+                    print('D10=',D10)
                     CellChange['G69'] = D10
                     Attributes = ['D10']
 
@@ -637,6 +645,7 @@ def read_icp(filename):
                     m = 117.0881
                     b = 10.2143
                     D10 = m * AreaRatio + b
+                    print('D10=',D10)
                     CellChange['G68'] = D10
                     Attributes = ['D10']
 
@@ -644,8 +653,10 @@ def read_icp(filename):
                     m = 143.9148
                     b = -9.3128
                     D10 = m * AreaRatio + b
+                    print('D10=',D10)
                     CellChange['G70'] = D10
                     Attributes = ['D10']
+            
 
 
 
@@ -684,6 +695,9 @@ def read_icp(filename):
                     Attributes = ['D10']
 
 
+
+            print('D10=',D10)
+        exit(0)
 
     # This section will calculate R50 for electron beams
     elif np.sum(np.asarray(CorrCountXvect) - np.asarray(CorrCountPDvect)) / 1e6 > 5 and beamtype == 'MeV':  # most likely the file is a quad-wedge and we can calculate then D10
