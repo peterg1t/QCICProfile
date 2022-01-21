@@ -1,6 +1,7 @@
 # Changelog
-# 2021_03_03: Modified int_detc_indx from commit https://github.com/peterg1t/QCICProfile/commit/eedffbb069d89dcc03556513ee404c2fdf467d0b
+# 2021_04_20: Added a helpful message to recheck setup if field size isn't 30x30.
 # 2021_04_08: Changed calname definition to include calibration files without "N:/"
+# 2021_03_03: Modified int_detc_indx from commit https://github.com/peterg1t/QCICProfile/commit/eedffbb069d89dcc03556513ee404c2fdf467d0b
 
 import os
 import sys
@@ -598,8 +599,18 @@ def read_icp(filename):
     peak1, _ = signal.find_peaks(CorrCountXvectResDiff, prominence=5000)
     peak2, _ = signal.find_peaks(-CorrCountXvectResDiff, prominence=5000)
 
+    # Check if the field edges are not detected
+    if (not peak1) or (not peak2):
+        raise RuntimeError(
+            "Field edge along X-axis not found! Please check field size and SSD are correct."
+        )
+        return
+
     if round(XRes[int(peak2)] - XRes[int(peak1)]) != 30:
-        print("WARNING: X Field is not setup correctly.")
+        raise RuntimeError(
+            "Field size not set to 30 x 30 cm. Please check setup is correct."
+        )
+        return
 
     # now doing the Y axis (inline)
     YRes = np.linspace(-16, 16, 1000)
@@ -609,8 +620,18 @@ def read_icp(filename):
     peak1, _ = signal.find_peaks(CorrCountYvectResDiff, prominence=5000)
     peak2, _ = signal.find_peaks(-CorrCountYvectResDiff, prominence=5000)
 
+    # Check if the field edges are not detected
+    if (not peak1) or (not peak2):
+        raise RuntimeError(
+            "Field edge along Y-axis not found! Please check field size and SSD are correct."
+        )
+        return
+
     if round(YRes[int(peak2)] - YRes[int(peak1)]) != 30:
-        print("WARNING: Y Field is not setup correctly.")
+        raise RuntimeError(
+            "Field size not set to 30 x 30 cm. Please check setup is correct."
+        )
+        return
 
     # Output the test results to the QA+ test dictionary variable
     results["unflatness_x"] = unflatness_x
@@ -625,7 +646,7 @@ def read_icp(filename):
 
 
 # Read .prs file and save results to dictionary
-_10x_icp_upload_analysis = read_icp(BIN_FILE)
+_6x_icp_upload_analysis = read_icp(BIN_FILE)
 name = BIN_FILE.name.split("/")[-1]
 name = "".join(name.split("_")[:-2]) + name[-4:]
-_10x_icp_upload_analysis["name"] = name
+_6x_icp_upload_analysis["name"] = name
